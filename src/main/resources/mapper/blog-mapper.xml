@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--https://mybatis.org/mybatis-3/zh/getting-started.html入门找已映射的sql语句copy过来-->
+<mapper namespace="com.nowcoder.community.dao.BlogMapper">
+
+    <resultMap id="BaseResultMap" type="com.nowcoder.community.entity.Blog">
+        <!--@mbg.generated-->
+        <!--@Table kuangstudy.ks_blog-->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="bid" jdbcType="VARCHAR" property="bid" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+        <result column="sort" jdbcType="INTEGER" property="sort" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="views" jdbcType="INTEGER" property="views" />
+        <result column="author_id" jdbcType="INTEGER" property="authorId" />
+        <result column="author_name" jdbcType="VARCHAR" property="authorName" />
+        <result column="author_avatar" jdbcType="VARCHAR" property="authorAvatar" />
+        <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+        <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, bid, title, content, sort, status,views, author_id, author_name, author_avatar, category_id,
+        category_name, gmt_create, gmt_update
+    </sql>
+
+    <insert id="insertBlog" keyColumn="id" keyProperty="id" parameterType="com.nowcoder.community.entity.Blog" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into blog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bid != null and bid != ''">
+                bid,
+            </if>
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="views != null">
+                views,
+            </if>
+            <if test="authorId != null and authorId != ''">
+                author_id,
+            </if>
+            <if test="authorName != null and authorName != ''">
+                author_name,
+            </if>
+            <if test="authorAvatar != null and authorAvatar != ''">
+                author_avatar,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                category_name,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtUpdate != null">
+                gmt_update,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bid != null and bid != ''">
+                #{bid,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null and title != ''">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null and content != ''">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="views != null">
+                #{views,jdbcType=INTEGER},
+            </if>
+            <if test="authorId != null and authorId != ''">
+                #{authorId,jdbcType=INTEGER},
+            </if>
+            <if test="authorName != null and authorName != ''">
+                #{authorName,jdbcType=VARCHAR},
+            </if>
+            <if test="authorAvatar != null and authorAvatar != ''">
+                #{authorAvatar,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtUpdate != null">
+                #{gmtUpdate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectAllByStatus" resultType="Blog">
+        select
+        <include refid="Base_Column_List"/>
+        from blog
+        where status = #{status,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <select id="selectByBid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blog
+        where bid=#{bid,jdbcType=VARCHAR}
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blog
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByIdAndCreateTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blog
+        where id = #{id,jdbcType=INTEGER} and gmt_create = #{gmtCreate,jdbcType=TIMESTAMP} and status = 0
+    </select>
+    <select id="selectBySort" resultType="Blog">
+        select
+        <include refid="Base_Column_List"/>
+        from blog
+        where sort=#{sort,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <select id="selectByCategory" resultType="Blog">
+        select <include refid="Base_Column_List"/>
+        from blog
+        where category_id = #{categoryId ,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <select id="selectByAuthorId" resultType="Blog">
+        select <include refid="Base_Column_List"/>
+        from blog
+        where author_id = #{userId}
+        order by id desc
+    </select>
+    <select id="selectByAvatar" resultType="Blog">
+        select <include refid="Base_Column_List"/>
+        from blog
+        where author_avatar = #{Avatar}
+        order by gmt_update desc
+        limit #{offset},#{limit}
+    </select>
+    <select id="selectAllByAvatar" resultType="Blog">
+        select <include refid="Base_Column_List"/>
+        from blog
+        where author_avatar = #{Avatar}
+        order by gmt_update desc
+    </select>
+    <select id="selectByAvatarAndClassname" resultType="Blog">
+        select <include refid="Base_Column_List"/>
+        from blog
+        where author_avatar = #{Avatar} and category_name = #{classname}
+        order by gmt_update desc
+    </select>
+    <select id="countByAuthorId" resultType="int">
+        select count(id) from blog where author_id = #{id}
+    </select>
+    <update id="updateViews">
+        update blog set views = #{count} where id = #{id}
+    </update>
+    <update id="updateBlog">
+        update blog set title = #{title} ,content = #{content} ,
+        category_id =#{categoryId}, category_name = #{categoryName},sort = #{sort},
+        author_avatar = #{authorAvatar},gmt_update = #{gmtUpdate}
+        where bid = #{bid}
+    </update>
+    <update id="updateStatus">
+        update blog set status = #{status} where id = #{id}
+    </update>
+    <delete id="deleteBlogById">
+        delete from blog where id = #{id}
+    </delete>
+</mapper>

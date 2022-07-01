@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--https://mybatis.org/mybatis-3/zh/getting-started.html入门找已映射的sql语句copy过来-->
+<mapper namespace="com.nowcoder.community.dao.QuestionMapper">
+
+    <resultMap id="BaseResultMap" type="com.nowcoder.community.entity.Question">
+        <!--@mbg.generated-->
+        <!--@Table kuangstudy.ks_blog-->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="qid" jdbcType="VARCHAR" property="qid" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+        <result column="sort" jdbcType="INTEGER" property="sort" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="views" jdbcType="INTEGER" property="views" />
+        <result column="author_id" jdbcType="INTEGER" property="authorId" />
+        <result column="author_name" jdbcType="VARCHAR" property="authorName" />
+        <result column="author_avatar" jdbcType="VARCHAR" property="authorAvatar" />
+        <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+        <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, qid, title, content, sort, status,views, author_id, author_name, author_avatar, category_id,
+        category_name, gmt_create, gmt_update
+    </sql>
+
+    <insert id="insertQuestion" keyColumn="id" keyProperty="id" parameterType="com.nowcoder.community.entity.Question" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qid != null and qid != ''">
+                qid,
+            </if>
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="views != null">
+                views,
+            </if>
+            <if test="authorId != null and authorId != ''">
+                author_id,
+            </if>
+            <if test="authorName != null and authorName != ''">
+                author_name,
+            </if>
+            <if test="authorAvatar != null and authorAvatar != ''">
+                author_avatar,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                category_name,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtUpdate != null">
+                gmt_update,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qid != null and qid != ''">
+                #{qid,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null and title != ''">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null and content != ''">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="views != null">
+                #{views,jdbcType=INTEGER},
+            </if>
+            <if test="authorId != null and authorId != ''">
+                #{authorId,jdbcType=INTEGER},
+            </if>
+            <if test="authorName != null and authorName != ''">
+                #{authorName,jdbcType=VARCHAR},
+            </if>
+            <if test="authorAvatar != null and authorAvatar != ''">
+                #{authorAvatar,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtUpdate != null">
+                #{gmtUpdate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectAllByStatus" resultType="Question">
+        select
+        <include refid="Base_Column_List"/>
+        from question
+        where status = #{status,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <select id="selectByQid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from question
+        where qid=#{qid,jdbcType=VARCHAR}
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from question
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByIdAndCreateTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from question
+        where id = #{id,jdbcType=INTEGER} and gmt_create = #{gmtCreate,jdbcType=TIMESTAMP} and status = 0
+    </select>
+    <select id="selectBySort" resultType="Question">
+        select
+        <include refid="Base_Column_List"/>
+        from question
+        where sort=#{sort,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <select id="selectByAuthorId" resultType="Question">
+        select <include refid="Base_Column_List"/>
+        from question
+        where author_id = #{userId}
+        order by id desc
+    </select>
+    <select id="countByAuthorId" resultType="int">
+        select count(id) from question where author_id = #{id}
+    </select>
+    <select id="selectByCategory" resultType="Question">
+        select <include refid="Base_Column_List"/>
+        from question
+        where category_id = #{categoryId ,jdbcType=INTEGER}
+        order by id desc
+    </select>
+    <update id="updateViews">
+        update question set views = #{count} where id = #{id}
+    </update>
+    <update id="updateQuestion">
+        update question set title = #{title} ,content = #{content} ,
+        category_id =#{categoryId}, category_name = #{categoryName},sort = #{sort}
+        where qid = #{qid}
+    </update>
+    <update id="updateStatus">
+        update question set status = #{status} where id = #{id}
+    </update>
+    <delete id="deleteQuestionById">
+        delete from question where id = #{id}
+    </delete>
+</mapper>

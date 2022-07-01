@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--https://mybatis.org/mybatis-3/zh/getting-started.html入门找已映射的sql语句copy过来-->
+<mapper namespace="com.nowcoder.community.dao.PaperMapper">
+    <!--papermapper路径-->
+    <!--每一个对应于papermapper的一个-->
+    <sql id="insertFields">
+        father_id, user_id, title, content, file_path, status, gmt_create,download_count
+    </sql><!--定义标签-->
+    <sql id="selectFields">
+        id, father_id, user_id, title, content, file_path, status, gmt_create,download_count
+    </sql>
+    <select id="selectById" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where id = #{id}<!--#字段表明引用方法的参数int id-->
+    </select>
+    <select id="selectByFilepath" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where file_path = #{filepath}
+    </select>
+
+    <select id="selectOnlyByStatus" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where status = #{status}
+        order by id desc
+    </select>
+    <!--查询标签，id要对应usermapper中的方法名。返回类型User，本来应该写上路径的但application.properties中配置了默认路径-->
+    <select id="selecyByUserid" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where user_id = #{userid}
+    </select>
+    <select id="selectByIdAndCreateTime" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where id = #{id} and gmt_create = #{gmtCreate} and (status = 0 or status = 2)
+    </select>
+    <select id="selectByStatus" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where status = #{status}
+        order by id desc
+        limit #{offset},#{limit}
+    </select>
+    <select id="newSelectByThreeStatus" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where status = #{status1} or status = #{status2} or status = #{status3}
+        order by id desc
+    </select>
+    <select id="newSelectByAuthorIdAndThreeStatus" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where user_id = #{userId} and (status = #{status1} or status = #{status2} or status = #{status3})
+        order by id desc
+    </select>
+    <select id="selectByTitle" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where title = #{title}
+    </select>
+    <select id="countByAuthorIdAndStatus" resultType="int">
+        select count(id) from paper where user_id = #{id} and status = #{status}
+    </select>
+    <select id="selectByAuthorIdAndStatus" resultType="Paper">
+        select <include refid="selectFields"></include>
+        from paper
+        where user_id = #{id} and status = #{status}
+        order by id desc
+    </select>
+    <!--insert标签 parameterType声明参数类型 keyproperty表明id字段主键对应属性（添加数据时不会输入id的mysql会自动生成id，mybatis从mysql得到后自动填入user）-->
+    <insert id="insertPaper" parameterType="Paper" keyProperty="id">
+        insert into paper (<include refid="insertFields"></include>)
+        values(#{fatherid}, #{userid}, #{title}, #{content}, #{filepath}, #{status}, #{gmtcreate}, #{downloadcount})
+    </insert>
+    <delete id="delectById">
+        delete from paper where id = #{id}
+    </delete>
+    <!--update标签-->
+    <update id="updatePaperstatus">
+        update paper set content = #{content},father_id = #{fatherid},status = #{status} where id = #{id}
+    </update>
+    <update id="updateDownloadcount">
+        update paper set download_count = #{downloadcount} where id = #{id}
+    </update>
+</mapper>
